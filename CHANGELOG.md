@@ -4,6 +4,18 @@ This fork tracks [three.js](https://github.com/mrdoob/three.js) (MIT, by mrdoob
 and contributors) and adds a small convenience layer on top. Only differences
 from upstream are listed here.
 
+## [1.3.0]
+
+Based on **three.js r184**.
+
+### Added
+- `setEnvironment(app, url, options)` — one-call HDR image-based lighting
+  (RGBELoader + PMREMGenerator + disposal), with optional background.
+- **TypeScript declarations** (`addons/ascended/index.d.ts`) for the whole helper
+  layer, wired via the package `exports` `types` condition.
+- `SYNC.md` — guide for merging upstream three.js releases and resolving the
+  expected rebrand conflicts.
+
 ## [1.2.0]
 
 Based on **three.js r184**.

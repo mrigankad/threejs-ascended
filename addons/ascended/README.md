@@ -67,6 +67,11 @@ decompression.
 - `options.dracoPath` – decoder path to enable DRACO (e.g. the gstatic CDN)
 - `options.onProgress` – progress callback
 
+### `setEnvironment(app, url, options?)` → `Promise<Texture>`
+Loads an equirectangular `.hdr` and applies it as the scene's image-based
+lighting environment (handles `RGBELoader` + `PMREMGenerator` + disposal). Pass
+`background: true` to also use it as the scene background.
+
 ### `loadTexture(url, options?)` → `Promise<Texture>`
 Promise-based texture loading that sets a correct color space (defaults to
 `SRGBColorSpace` for color maps; pass `NoColorSpace` for data maps like normal
@@ -92,6 +97,11 @@ remove objects. Returns the number of `dispose()` calls made.
 ### `Loop(callback, options?)` and `ResizeManager(config, options?)`
 The lower-level building blocks used by `SceneApp`, exported for direct use and
 fully unit-tested (browser APIs are injectable).
+
+## TypeScript
+
+Type declarations ship in [`index.d.ts`](./index.d.ts) and are wired via the
+package `exports`, so editors autocomplete the whole helper layer out of the box.
 
 ## Tests
 

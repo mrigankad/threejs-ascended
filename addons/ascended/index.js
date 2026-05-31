@@ -19,3 +19,4 @@ export { screenshot } from './screenshot.js';
 export { memoizeLoader } from './cache.js';
 export { loadTexture } from './texture.js';
 export { addStats } from './stats.js';
+export { setEnvironment } from './environment.js';

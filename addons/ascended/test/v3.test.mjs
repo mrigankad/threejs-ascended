@@ -5,6 +5,7 @@ import { screenshot } from '../screenshot.js';
 import { memoizeLoader } from '../cache.js';
 import { loadTexture } from '../texture.js';
 import { addStats } from '../stats.js';
+import { setEnvironment } from '../environment.js';
 
 test( 'screenshot renders, returns a data URL, and can trigger a download', () => {
 
@@ -68,7 +69,9 @@ test( 'texture and stats expose async helper functions', () => {
 
 	assert.equal( typeof loadTexture, 'function' );
 	assert.equal( typeof addStats, 'function' );
+	assert.equal( typeof setEnvironment, 'function' );
 	assert.equal( loadTexture.constructor.name, 'AsyncFunction' );
 	assert.equal( addStats.constructor.name, 'AsyncFunction' );
+	assert.equal( setEnvironment.constructor.name, 'AsyncFunction' );
 
 } );
