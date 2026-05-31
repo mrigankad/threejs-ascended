@@ -1,11 +1,39 @@
+<p align="center">
+  <img src="files/ascended-hero.png" alt="three.js Ascended — Build worlds. Ascend reality." width="100%" />
+</p>
+
 # three.js Ascended
 
-> **A personal fork of [three.js](https://github.com/mrdoob/three.js).**
-> This is a personal build based on three.js r184. All credit for the library
-> goes to [mrdoob](https://github.com/mrdoob) and the three.js contributors.
-> Distributed under the original three.js MIT License (see [`LICENSE`](./LICENSE)).
-> This fork is **not** affiliated with or endorsed by the upstream three.js project.
-> For the official, actively maintained library, use [three.js](https://github.com/mrdoob/three.js).
+**Build worlds. Ascend reality.** A personal, batteries-included build on top of [three.js](https://github.com/mrdoob/three.js).
+
+three.js Ascended is the full three.js library plus a small **[`ascended` helper layer](./addons/ascended/)**
+that removes the most common friction points — scene setup boilerplate and the
+"nothing shows up because there's no light" trap — so you can go from zero to a
+rendered, animated scene in a few lines.
+
+```js
+import { SceneApp, addStudioLighting } from 'threejs-ascended/addons/ascended';
+import { BoxGeometry, Mesh, MeshStandardMaterial } from 'threejs-ascended';
+
+const app = new SceneApp( { container: document.querySelector( '#app' ) } );
+addStudioLighting( app.scene );
+
+const cube = new Mesh( new BoxGeometry(), new MeshStandardMaterial( { color: 0x3399ff } ) );
+app.scene.add( cube );
+
+app.onUpdate( ( delta ) => { cube.rotation.y += delta; } );
+app.start();
+```
+
+→ See the **[Ascended helper docs](./addons/ascended/)** and the runnable
+[`example.html`](./addons/ascended/example.html) demo.
+
+> **Attribution.** This is a personal fork based on three.js r184. All credit for
+> the underlying library goes to [mrdoob](https://github.com/mrdoob) and the
+> three.js contributors. Distributed under the original three.js MIT License
+> (see [`LICENSE`](./LICENSE)). This fork is **not** affiliated with or endorsed
+> by the upstream three.js project. For the official, actively maintained
+> library, use [three.js](https://github.com/mrdoob/three.js).
 
 ---
 
