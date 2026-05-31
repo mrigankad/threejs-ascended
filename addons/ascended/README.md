@@ -52,6 +52,26 @@ render loop.
 Adds a sensible hemisphere + ambient + key/fill directional rig so lit materials
 are visible immediately. Returns the light `Group` (removable in one call).
 
+### `addOrbitControls(app, options?)` → `Promise<OrbitControls>`
+One-line orbit controls for a `SceneApp`: wires three.js `OrbitControls` to the
+camera and canvas, enables damping, and auto-updates each frame. `OrbitControls`
+is loaded dynamically, so it's only pulled in when used.
+
+- `options.enableDamping` (default `true`), `options.dampingFactor` (default `0.05`)
+- `options.target` – `{ x, y, z }` point to orbit around
+
+### `loadGLTF(url, options?)` → `Promise<GLTF>`
+Promise-based glTF/GLB loading via three.js `GLTFLoader`, with optional DRACO
+decompression.
+
+- `options.dracoPath` – decoder path to enable DRACO (e.g. the gstatic CDN)
+- `options.onProgress` – progress callback
+
+### `disposeObject(object)` → `number`
+Recursively frees GPU resources (geometries, materials, and their textures) for
+an object and its descendants — three.js does not do this automatically when you
+remove objects. Returns the number of `dispose()` calls made.
+
 ### `Loop(callback, options?)` and `ResizeManager(config, options?)`
 The lower-level building blocks used by `SceneApp`, exported for direct use and
 fully unit-tested (browser APIs are injectable).

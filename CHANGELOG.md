@@ -4,6 +4,18 @@ This fork tracks [three.js](https://github.com/mrdoob/three.js) (MIT, by mrdoob
 and contributors) and adds a small convenience layer on top. Only differences
 from upstream are listed here.
 
+## [1.1.0]
+
+Based on **three.js r184**.
+
+### Added
+- `addOrbitControls(app, options)` — one-line OrbitControls wired to a `SceneApp`
+  with damping and per-frame auto-update (OrbitControls loaded dynamically).
+- `loadGLTF(url, options)` — promise-based glTF/GLB loading with optional DRACO.
+- `disposeObject(object)` — recursive GPU-resource cleanup (geometries, materials,
+  textures), addressing three.js's lack of automatic disposal.
+- `example.html` now demonstrates orbit controls.
+
 ## [1.0.0]
 
 Based on **three.js r184**.

@@ -22,11 +22,12 @@
 
 		<script type="module">
 			import { BoxGeometry, Mesh, MeshStandardMaterial } from 'three';
-			import { SceneApp, addStudioLighting } from './index.js';
+			import { SceneApp, addStudioLighting, addOrbitControls } from './index.js';
 
 			const app = new SceneApp( { container: document.querySelector( '#app' ) } );
 
 			addStudioLighting( app.scene );
+			await addOrbitControls( app );
 
 			const cube = new Mesh(
 				new BoxGeometry(),
