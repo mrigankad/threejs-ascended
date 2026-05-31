@@ -1,0 +1,36 @@
+name: Ascended CI
+
+on:
+  push:
+    branches: [ dev, main ]
+  pull_request:
+    branches: [ dev, main ]
+
+# Only the Ascended helper layer is validated here. Avoid downloading the
+# Puppeteer/Chromium binary since these checks don't need a browser.
+env:
+  PUPPETEER_SKIP_DOWNLOAD: 'true'
+
+jobs:
+  test:
+    name: Lint & test Ascended helpers
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint helper layer
+        run: npx eslint addons/ascended/*.js
+
+      - name: Run helper tests
+        run: npm run test-ascended

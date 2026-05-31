@@ -2,15 +2,24 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>three.js Ascended — SceneApp demo</title>
+		<title>three.js Ascended — helpers demo</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<style>
-			html, body { margin: 0; height: 100%; background: #111; overflow: hidden; }
-			#app { width: 100vw; height: 100vh; }
+			html, body { margin: 0; height: 100%; background: #0b0d12; overflow: hidden; font-family: system-ui, sans-serif; }
+			#app { width: 100vw; height: 100vh; display: block; }
+			#ui { position: fixed; left: 12px; bottom: 12px; display: flex; gap: 8px; z-index: 10; }
+			#ui button {
+				background: #1b2535; color: #cfe3ff; border: 1px solid #2c3e5c;
+				padding: 8px 14px; border-radius: 8px; font-size: 13px; cursor: pointer;
+			}
+			#ui button:hover { background: #243149; }
 		</style>
 	</head>
 	<body>
 		<div id="app"></div>
+		<div id="ui">
+			<button id="shot">📸 Screenshot</button>
+		</div>
 
 		<script type="importmap">
 			{
@@ -21,28 +30,56 @@
 		</script>
 
 		<script type="module">
-			import { BoxGeometry, Mesh, MeshStandardMaterial } from 'three';
-			import { SceneApp, addStudioLighting, addOrbitControls } from './index.js';
+			import { BoxGeometry, Mesh, MeshStandardMaterial, TorusKnotGeometry } from 'three';
+			import {
+				SceneApp,
+				addStudioLighting,
+				addOrbitControls,
+				addStats,
+				screenshot,
+				disposeObject
+			} from './index.js';
 
+			// One-line bootstrap: renderer + scene + camera + resize + loop.
 			const app = new SceneApp( { container: document.querySelector( '#app' ) } );
+			app.camera.position.set( 3, 2, 5 );
 
+			// Sensible defaults so the mesh is actually visible.
 			addStudioLighting( app.scene );
-			await addOrbitControls( app );
 
-			const cube = new Mesh(
-				new BoxGeometry(),
-				new MeshStandardMaterial( { color: 0x3399ff, roughness: 0.4, metalness: 0.1 } )
+			// One-line orbit controls (loaded on demand) + FPS overlay.
+			await addOrbitControls( app, { enableDamping: true } );
+			await addStats( app );
+
+			const knot = new Mesh(
+				new TorusKnotGeometry( 1, 0.32, 160, 24 ),
+				new MeshStandardMaterial( { color: 0x3399ff, roughness: 0.35, metalness: 0.2 } )
 			);
-			app.scene.add( cube );
+			app.scene.add( knot );
 
 			app.onUpdate( ( delta ) => {
 
-				cube.rotation.x += delta * 0.5;
-				cube.rotation.y += delta;
+				knot.rotation.x += delta * 0.3;
+				knot.rotation.y += delta * 0.5;
 
 			} );
 
 			app.start();
+
+			// Capture the current frame to a downloaded PNG.
+			document.querySelector( '#shot' ).addEventListener( 'click', () => {
+
+				screenshot( app, { download: true, fileName: 'ascended.png' } );
+
+			} );
+
+			// Clean teardown on unload (frees GPU resources).
+			window.addEventListener( 'beforeunload', () => {
+
+				disposeObject( app.scene );
+				app.dispose();
+
+			} );
 		</script>
 	</body>
 </html>

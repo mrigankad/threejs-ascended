@@ -4,6 +4,13 @@
 
 # three.js Ascended
 
+<p align="center">
+  <a href="https://github.com/mrigankad/threejs-ascended/actions/workflows/ascended-ci.yml"><img src="https://github.com/mrigankad/threejs-ascended/actions/workflows/ascended-ci.yml/badge.svg" alt="Ascended CI" /></a>
+  <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License" />
+  <img src="https://img.shields.io/badge/based%20on-three.js%20r184-blue.svg" alt="Based on three.js r184" />
+  <img src="https://img.shields.io/badge/helper%20tests-10%20passing-brightgreen.svg" alt="10 helper tests passing" />
+</p>
+
 **Build worlds. Ascend reality.** A personal, batteries-included build on top of [three.js](https://github.com/mrdoob/three.js).
 
 three.js Ascended is the full three.js library plus a small **[`ascended` helper layer](./addons/ascended/)**
