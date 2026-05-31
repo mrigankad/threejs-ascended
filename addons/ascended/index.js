@@ -15,3 +15,7 @@ export { addStudioLighting } from './lighting.js';
 export { disposeObject } from './dispose.js';
 export { addOrbitControls } from './controls.js';
 export { loadGLTF } from './loaders.js';
+export { screenshot } from './screenshot.js';
+export { memoizeLoader } from './cache.js';
+export { loadTexture } from './texture.js';
+export { addStats } from './stats.js';

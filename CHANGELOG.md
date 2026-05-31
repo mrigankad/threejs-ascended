@@ -4,6 +4,19 @@ This fork tracks [three.js](https://github.com/mrdoob/three.js) (MIT, by mrdoob
 and contributors) and adds a small convenience layer on top. Only differences
 from upstream are listed here.
 
+## [1.2.0]
+
+Based on **three.js r184**.
+
+### Added
+- `loadTexture(url, options)` — promise-based texture loading with correct
+  color-space defaults (`SRGBColorSpace`), avoiding washed-out color maps.
+- `screenshot(app, options)` — capture the current frame to a data URL, with
+  optional download.
+- `memoizeLoader(loadFn)` — loader-agnostic promise cache (dedupes by URL,
+  evicts failures for retry).
+- `addStats(app)` — FPS / frame-time overlay wired to the render loop.
+
 ## [1.1.0]
 
 Based on **three.js r184**.

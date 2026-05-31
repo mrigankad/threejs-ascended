@@ -1,6 +1,6 @@
 {
   "name": "threejs-ascended",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "three.js Ascended - a personal three.js-based 3D library build, forked from three.js r184 (https://github.com/mrdoob/three.js). Maintains the original three.js MIT license and attribution.",
   "type": "module",
   "main": "./build/three.cjs",
@@ -74,7 +74,7 @@
     "test-e2e": "node test/e2e/puppeteer.js",
     "test-e2e-cov": "node test/e2e/check-coverage.js",
     "test-e2e-webgpu": "node test/e2e/puppeteer.js --webgpu",
-    "test-ascended": "node --test addons/ascended/test/ascended.test.mjs addons/ascended/test/v2.test.mjs",
+    "test-ascended": "node --test addons/ascended/test/ascended.test.mjs addons/ascended/test/v2.test.mjs addons/ascended/test/v3.test.mjs",
     "test-treeshake": "rollup -c test/rollup.treeshake.config.js",
     "make-screenshot": "node test/e2e/puppeteer.js --make"
   },

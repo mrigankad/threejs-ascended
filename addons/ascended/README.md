@@ -67,6 +67,23 @@ decompression.
 - `options.dracoPath` – decoder path to enable DRACO (e.g. the gstatic CDN)
 - `options.onProgress` – progress callback
 
+### `loadTexture(url, options?)` → `Promise<Texture>`
+Promise-based texture loading that sets a correct color space (defaults to
+`SRGBColorSpace` for color maps; pass `NoColorSpace` for data maps like normal
+or roughness). Avoids the common washed-out/too-dark texture mistake.
+
+### `screenshot(app, options?)` → `string`
+Re-renders the current frame and returns an image data URL; optionally triggers
+a download (`download: true`, `fileName`, `mimeType`).
+
+### `memoizeLoader(loadFn)` → `Function`
+Wraps any async loader with a promise cache keyed by URL, so an asset is fetched
+once even under concurrent requests. Has `.clear()`; evicts failures for retry.
+
+### `addStats(app, options?)` → `Promise<Stats>`
+Adds an FPS / frame-time overlay that updates on the render loop (three.js
+`stats.module`, loaded dynamically).
+
 ### `disposeObject(object)` → `number`
 Recursively frees GPU resources (geometries, materials, and their textures) for
 an object and its descendants — three.js does not do this automatically when you
