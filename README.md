@@ -1,3 +1,14 @@
+# three-mriganka
+
+> **A personal fork of [three.js](https://github.com/mrdoob/three.js).**
+> This is a personal build based on three.js r184. All credit for the library
+> goes to [mrdoob](https://github.com/mrdoob) and the three.js contributors.
+> Distributed under the original three.js MIT License (see [`LICENSE`](./LICENSE)).
+> This fork is **not** affiliated with or endorsed by the upstream three.js project.
+> For the official, actively maintained library, use [three.js](https://github.com/mrdoob/three.js).
+
+---
+
 # three.js
 
 [![NPM Package][npm]][npm-url]

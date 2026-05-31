@@ -20335,7 +20335,7 @@ class ClippingNode extends Node {
 		const clippingContext = builder.clippingContext;
 		const { intersectionPlanes, unionPlanes } = clippingContext;
 
-		this.hardwareClipping = builder.material.hardwareClipping;
+		this.hardwareClipping = builder.hardwareClipping;
 
 		if ( this.scope === ClippingNode.ALPHA_TO_COVERAGE ) {
 
@@ -20757,16 +20757,6 @@ class NodeMaterial extends Material {
 		 * @default false
 		 */
 		this.lights = false;
-
-		/**
-		 * Whether this material uses hardware clipping or not.
-		 * This property is managed by the engine and should not be
-		 * modified by apps.
-		 *
-		 * @type {boolean}
-		 * @default false
-		 */
-		this.hardwareClipping = false;
 
 		/**
 		 * Node materials which set their `lights` property to `true`
@@ -21330,7 +21320,7 @@ class NodeMaterial extends Material {
 	 */
 	setupHardwareClipping( builder ) {
 
-		this.hardwareClipping = false;
+		builder.hardwareClipping = false;
 
 		if ( builder.clippingContext === null ) return;
 
@@ -21342,7 +21332,7 @@ class NodeMaterial extends Material {
 
 			builder.stack.addToStack( hardwareClipping() );
 
-			this.hardwareClipping = true;
+			builder.hardwareClipping = true;
 
 		}
 
@@ -29720,6 +29710,16 @@ class RenderObject {
 		this._monitor = null;
 
 		/**
+		 * The object's original material when this render object is drawn with an
+		 * override material.
+		 *
+		 * @type {?Material}
+		 * @private
+		 * @default null
+		 */
+		this._sourceMaterial = renderer._currentSourceMaterial;
+
+		/**
 		 * An event listener which is defined by `RenderObjects`. It performs
 		 * clean up tasks when `dispose()` on this render object.
 		 *
@@ -29766,6 +29766,12 @@ class RenderObject {
 		this.material.addEventListener( 'dispose', this.onMaterialDispose );
 		this.geometry.addEventListener( 'dispose', this.onGeometryDispose );
 
+		if ( this._sourceMaterial !== null ) {
+
+			this._sourceMaterial.addEventListener( 'dispose', this.onMaterialDispose );
+
+		}
+
 	}
 
 	/**
@@ -29803,7 +29809,7 @@ class RenderObject {
 	 */
 	get hardwareClippingPlanes() {
 
-		return this.material.hardwareClipping === true ? this.clippingContext.unionClippingCount : 0;
+		return this.getNodeBuilderState().hardwareClipping === true ? this.clippingContext.unionClippingCount : 0;
 
 	}
 
@@ -30360,6 +30366,12 @@ class RenderObject {
 
 		this.material.removeEventListener( 'dispose', this.onMaterialDispose );
 		this.geometry.removeEventListener( 'dispose', this.onGeometryDispose );
+
+		if ( this._sourceMaterial !== null ) {
+
+			this._sourceMaterial.removeEventListener( 'dispose', this.onMaterialDispose );
+
+		}
 
 		this.onDispose();
 
@@ -32674,6 +32686,10 @@ class Bindings extends DataMap {
 
 						binding.release();
 
+					} else if ( binding.isSampler ) {
+
+						binding.release();
+
 					}
 
 				}
@@ -34328,6 +34344,7 @@ class Textures extends DataMap {
 						if ( binding.isSampler && binding.texture === texture ) {
 
 							binding.reset();
+							binding.release();
 
 						}
 
@@ -48761,9 +48778,10 @@ class NodeBuilderState {
 	 * @param {Array<Node>} updateBeforeNodes - An array of nodes that implement their `updateBefore()` method.
 	 * @param {Array<Node>} updateAfterNodes - An array of nodes that implement their `updateAfter()` method.
 	 * @param {NodeMaterialObserver} observer - A node material observer.
+	 * @param {boolean} hardwareClipping - Whether the built material uses hardware clipping or not.
 	 * @param {Array<Object>} transforms - An array with transform attribute objects. Only relevant when using compute shaders with WebGL 2.
 	 */
-	constructor( vertexShader, fragmentShader, computeShader, nodeAttributes, bindings, updateNodes, updateBeforeNodes, updateAfterNodes, observer, transforms = [] ) {
+	constructor( vertexShader, fragmentShader, computeShader, nodeAttributes, bindings, updateNodes, updateBeforeNodes, updateAfterNodes, observer, hardwareClipping, transforms = [] ) {
 
 		/**
 		 * The native vertex shader code.
@@ -48837,6 +48855,13 @@ class NodeBuilderState {
 		 * @type {NodeMaterialObserver}
 		 */
 		this.observer = observer;
+
+		/**
+		 * Whether the built material uses hardware clipping or not.
+		 *
+		 * @type {boolean}
+		 */
+		this.hardwareClipping = hardwareClipping;
 
 		/**
 		 * How often this state is used by render objects.
@@ -50153,9 +50178,9 @@ class NodeBuilder {
 		 * A list of all nodes the builder is processing
 		 * for this 3D object.
 		 *
-		 * @type {Array<Node>}
+		 * @type {Set<Node>}
 		 */
-		this.nodes = [];
+		this.nodes = new Set();
 
 		/**
 		 * A list of all nodes the builder is processing in sequential order.
@@ -50233,6 +50258,14 @@ class NodeBuilder {
 		 * @type {?ClippingContext}
 		 */
 		this.clippingContext = null;
+
+		/**
+		 * Whether the built material uses hardware clipping or not.
+		 *
+		 * @type {boolean}
+		 * @default false
+		 */
+		this.hardwareClipping = false;
 
 		/**
 		 * The generated vertex shader.
@@ -50549,7 +50582,7 @@ class NodeBuilder {
 	 */
 	includes( node ) {
 
-		return this.nodes.includes( node );
+		return this.nodes.has( node );
 
 	}
 
@@ -50834,9 +50867,9 @@ class NodeBuilder {
 	 */
 	addNode( node ) {
 
-		if ( this.nodes.includes( node ) === false ) {
+		if ( this.nodes.has( node ) === false ) {
 
-			this.nodes.push( node );
+			this.nodes.add( node );
 
 			this.setHashNode( node, node.getHash( this ) );
 
@@ -55167,6 +55200,7 @@ class NodeManager extends DataMap {
 			nodeBuilder.updateBeforeNodes,
 			nodeBuilder.updateAfterNodes,
 			nodeBuilder.observer,
+			nodeBuilder.hardwareClipping,
 			nodeBuilder.transforms
 		);
 
@@ -59328,6 +59362,16 @@ class Renderer {
 		this._compilationPromises = null;
 
 		/**
+		 * When an override material is in use, this property points to the current
+		 * source material during the rendering of a render object.
+		 *
+		 * @private
+		 * @type {?Material}
+		 * @default null
+		 */
+		this._currentSourceMaterial = null;
+
+		/**
 		 * Whether the renderer should render transparent render objects or not.
 		 *
 		 * @type {boolean}
@@ -59589,9 +59633,24 @@ class Renderer {
 
 		//
 
+		if ( scene.matrixWorldAutoUpdate === true ) scene.updateMatrixWorld();
+
+		camera = this._updateCamera( camera );
+
+		//
+
 		sceneRef.onBeforeRender( this, scene, camera, renderTarget );
 
 		//
+
+		const frustum = camera.isArrayCamera ? _frustumArray : _frustum;
+
+		if ( ! camera.isArrayCamera ) {
+
+			_projScreenMatrix.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse );
+			frustum.setFromProjectionMatrix( _projScreenMatrix, camera.coordinateSystem, camera.reversedDepth );
+
+		}
 
 		// Use sceneRef for render list to ensure lightsNode matches between compileAsync and render
 		const renderList = this._renderLists.get( sceneRef, camera );
@@ -60233,87 +60292,9 @@ class Renderer {
 
 		//
 
-
-		const xr = this.xr;
-
-		if ( xr.isPresenting === false ) {
-
-			let projectionMatrixNeedsUpdate = false;
-
-			// reversed depth
-
-			if ( this.reversedDepthBuffer === true && camera.reversedDepth !== true ) {
-
-				camera._reversedDepth = true;
-
-				if ( camera.isArrayCamera ) {
-
-					for ( const subCamera of camera.cameras ) {
-
-						subCamera._reversedDepth = true;
-
-					}
-
-				}
-
-				projectionMatrixNeedsUpdate = true;
-
-			}
-
-			// WebGPU/WebGL coordinate system
-
-			const coordinateSystem = this.coordinateSystem;
-
-			if ( camera.coordinateSystem !== coordinateSystem ) {
-
-				camera.coordinateSystem = coordinateSystem;
-
-				if ( camera.isArrayCamera ) {
-
-					for ( const subCamera of camera.cameras ) {
-
-						subCamera.coordinateSystem = coordinateSystem;
-
-					}
-
-				}
-
-				projectionMatrixNeedsUpdate = true;
-
-			}
-
-			// camera update
-
-			if ( projectionMatrixNeedsUpdate === true ) {
-
-				camera.updateProjectionMatrix();
-
-				if ( camera.isArrayCamera ) {
-
-					for ( const subCamera of camera.cameras ) {
-
-						subCamera.updateProjectionMatrix();
-
-					}
-
-				}
-
-			}
-
-		}
-
-		//
-
 		if ( scene.matrixWorldAutoUpdate === true ) scene.updateMatrixWorld();
 
-		if ( camera.parent === null && camera.matrixWorldAutoUpdate === true ) camera.updateMatrixWorld();
-
-		if ( xr.enabled === true && xr.isPresenting === true ) {
-
-			if ( xr.cameraAutoUpdate === true ) xr.updateCamera( camera );
-			camera = xr.getCamera(); // use XR camera for rendering
-
-		}
+		camera = this._updateCamera( camera );
 
 		//
 
@@ -62099,6 +62080,98 @@ class Renderer {
 	}
 
 	/**
+	 * Updates the camera so it's prepared for rendering operations.
+	 *
+	 * @private
+	 * @param {Camera} camera - The camera to update.
+	 * @return {Camera} The returned camera might be different depending on whether XR is used or not.
+	 */
+	_updateCamera( camera ) {
+
+		const xr = this.xr;
+
+		if ( xr.isPresenting === false ) {
+
+			let projectionMatrixNeedsUpdate = false;
+
+			// reversed depth
+
+			if ( this.reversedDepthBuffer === true && camera.reversedDepth !== true ) {
+
+				camera._reversedDepth = true;
+
+				if ( camera.isArrayCamera ) {
+
+					for ( const subCamera of camera.cameras ) {
+
+						subCamera._reversedDepth = true;
+
+					}
+
+				}
+
+				projectionMatrixNeedsUpdate = true;
+
+			}
+
+			// WebGPU/WebGL coordinate system
+
+			const coordinateSystem = this.coordinateSystem;
+
+			if ( camera.coordinateSystem !== coordinateSystem ) {
+
+				camera.coordinateSystem = coordinateSystem;
+
+				if ( camera.isArrayCamera ) {
+
+					for ( const subCamera of camera.cameras ) {
+
+						subCamera.coordinateSystem = coordinateSystem;
+
+					}
+
+				}
+
+				projectionMatrixNeedsUpdate = true;
+
+			}
+
+			// camera update
+
+			if ( projectionMatrixNeedsUpdate === true ) {
+
+				camera.updateProjectionMatrix();
+
+				if ( camera.isArrayCamera ) {
+
+					for ( const subCamera of camera.cameras ) {
+
+						subCamera.updateProjectionMatrix();
+
+					}
+
+				}
+
+			}
+
+		}
+
+		if ( camera.parent === null && camera.matrixWorldAutoUpdate === true ) camera.updateMatrixWorld();
+
+		// handle XR
+
+		if ( xr.enabled === true && xr.isPresenting === true ) {
+
+			if ( xr.cameraAutoUpdate === true ) xr.updateCamera( camera );
+			camera = xr.getCamera(); // use XR camera for rendering
+
+		}
+
+		return camera;
+
+	}
+
+	/**
 	 * This method represents the default render object function that manages the render lifecycle
 	 * of the object.
 	 *
@@ -62120,6 +62193,8 @@ class Renderer {
 		let materialPositionNode;
 		let materialSide;
 
+		const previousSourceMaterial = this._currentSourceMaterial;
+
 		//
 
 		object.onBeforeRender( this, scene, camera, geometry, material, group );
@@ -62127,6 +62202,8 @@ class Renderer {
 		//
 
 		if ( material.allowOverride === true && scene.overrideMaterial !== null ) {
+
+			this._currentSourceMaterial = material;
 
 			const overrideMaterial = scene.overrideMaterial;
 
@@ -62202,6 +62279,8 @@ class Renderer {
 			scene.overrideMaterial.side = materialSide;
 
 		}
+
+		this._currentSourceMaterial = previousSourceMaterial;
 
 		//
 
@@ -63462,6 +63541,15 @@ class Sampler extends Binding {
 
 		this.generation = null;
 		this.version = -1;
+
+	}
+
+	/**
+	 * Releases the texture reference.
+	 */
+	release() {
+
+		this._texture = null;
 
 	}
 

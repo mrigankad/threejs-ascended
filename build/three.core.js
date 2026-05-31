@@ -36329,6 +36329,10 @@ class SphereGeometry extends BufferGeometry {
 			const verticesRow = [];
 
 			const v = iy / heightSegments;
+			const theta = thetaStart + v * thetaLength;
+
+			const y = radius * Math.cos( theta );
+			const ringRadius = Math.sqrt( radius * radius - y * y );
 
 			// special case for the poles
 
@@ -36347,12 +36351,13 @@ class SphereGeometry extends BufferGeometry {
 			for ( let ix = 0; ix <= widthSegments; ix ++ ) {
 
 				const u = ix / widthSegments;
+				const phi = phiStart + u * phiLength;
 
 				// vertex
 
-				vertex.x = - radius * Math.cos( phiStart + u * phiLength ) * Math.sin( thetaStart + v * thetaLength );
-				vertex.y = radius * Math.cos( thetaStart + v * thetaLength );
-				vertex.z = radius * Math.sin( phiStart + u * phiLength ) * Math.sin( thetaStart + v * thetaLength );
+				vertex.x = - ringRadius * Math.cos( phi );
+				vertex.y = y;
+				vertex.z = ringRadius * Math.sin( phi );
 
 				vertices.push( vertex.x, vertex.y, vertex.z );
 
@@ -48833,6 +48838,8 @@ class ObjectLoader extends Loader {
 		let loader;
 
 		function loadImage( url ) {
+
+			url = scope.manager.resolveURL( url );
 
 			scope.manager.itemStart( url );
 

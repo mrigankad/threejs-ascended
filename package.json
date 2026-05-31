@@ -1,7 +1,7 @@
 {
-  "name": "three",
-  "version": "0.184.0",
-  "description": "JavaScript 3D library",
+  "name": "three-mriganka",
+  "version": "1.0.0",
+  "description": "A personal three.js-based 3D library build, forked from three.js r184 (https://github.com/mrdoob/three.js). Maintains the original three.js MIT license and attribution.",
   "type": "module",
   "main": "./build/three.cjs",
   "module": "./build/three.module.js",
@@ -20,6 +20,11 @@
   },
   "repository": {
     "type": "git",
+    "url": "https://github.com/mrigankad/three-mriganka"
+  },
+  "forkedFrom": {
+    "name": "three",
+    "version": "0.184.0",
     "url": "https://github.com/mrdoob/three.js"
   },
   "sideEffects": [
@@ -86,12 +91,12 @@
     "svg",
     "html5"
   ],
-  "author": "mrdoob",
+  "author": "Mriganka Dey (fork of three.js by mrdoob and three.js contributors)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mrdoob/three.js/issues"
+    "url": "https://github.com/mrigankad/three-mriganka/issues"
   },
-  "homepage": "https://threejs.org/",
+  "homepage": "https://github.com/mrigankad/three-mriganka#readme",
   "devDependencies": {
     "@eslint/js": "^9.0.0",
     "@rollup/plugin-node-resolve": "^16.0.0",

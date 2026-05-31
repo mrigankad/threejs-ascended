@@ -17642,6 +17642,8 @@ class WebGLRenderer {
 
 			this.info.render.frame ++;
 
+			if ( this.info.autoReset === true ) this.info.reset();
+
 			if ( _clippingEnabled === true ) clipping.beginShadows();
 
 			const shadowsArray = currentRenderState.state.shadowsArray;
@@ -17651,8 +17653,6 @@ class WebGLRenderer {
 			if ( _clippingEnabled === true ) clipping.endShadows();
 
 			//
-
-			if ( this.info.autoReset === true ) this.info.reset();
 
 			// render scene (skip if first effect is a render pass - it will render the scene itself)
 
