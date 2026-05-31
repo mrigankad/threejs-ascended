@@ -1,4 +1,4 @@
-# three-mriganka
+# three.js Ascended
 
 > **A personal fork of [three.js](https://github.com/mrdoob/three.js).**
 > This is a personal build based on three.js r184. All credit for the library
