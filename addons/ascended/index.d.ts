@@ -118,13 +118,13 @@ export interface ScreenshotOptions {
 
 export function screenshot( app: SceneApp, options?: ScreenshotOptions ): string;
 
-export interface MemoizedLoader<T> {
-	( key: string, ...rest: unknown[] ): Promise<T>;
-	clear(): void;
-	cache: Map<string, Promise<T>>;
-}
+export type MemoizedLoader<F extends ( key: string, ...rest: any[] ) => any> =
+	( ( ...args: Parameters<F> ) => Promise<Awaited<ReturnType<F>>> ) & {
+		clear(): void;
+		cache: Map<string, Promise<Awaited<ReturnType<F>>>>;
+	};
 
-export function memoizeLoader<T>( loadFn: ( key: string, ...rest: unknown[] ) => Promise<T> | T ): MemoizedLoader<T>;
+export function memoizeLoader<F extends ( key: string, ...rest: any[] ) => any>( loadFn: F ): MemoizedLoader<F>;
 
 export interface AddStatsOptions {
 	parent?: HTMLElement;
@@ -133,3 +133,29 @@ export interface AddStatsOptions {
 export function addStats( app: SceneApp, options?: AddStatsOptions ): Promise<any>;
 
 export function disposeObject( object: Object3D ): number;
+
+export interface PointerPickerOptions {
+	raycaster?: unknown;
+	eventType?: string;
+}
+
+export class PointerPicker {
+	constructor( app: SceneApp, options?: PointerPickerOptions );
+	on( object: Object3D, callback: ( intersection: any ) => void ): () => void;
+	setPointerFromEvent( event: { clientX: number; clientY: number }, rect: { left: number; top: number; width: number; height: number } ): unknown;
+	handleEvent( event: { clientX: number; clientY: number } ): void;
+	start(): this;
+	stop(): this;
+}
+
+export function addPicking( app: SceneApp, options?: PointerPickerOptions ): PointerPicker;
+
+export interface LoadAudioOptions {
+	positional?: boolean;
+	loop?: boolean;
+	volume?: number;
+	autoplay?: boolean;
+	refDistance?: number;
+}
+
+export function loadAudio( app: SceneApp, url: string, options?: LoadAudioOptions ): Promise<any>;

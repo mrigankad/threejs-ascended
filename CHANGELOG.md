@@ -4,6 +4,18 @@ This fork tracks [three.js](https://github.com/mrdoob/three.js) (MIT, by mrdoob
 and contributors) and adds a small convenience layer on top. Only differences
 from upstream are listed here.
 
+## [1.4.0]
+
+Based on **three.js r184**.
+
+### Added
+- `addPicking(app)` / `PointerPicker` — click/pointer picking with a simple
+  `app.onClick( object, callback )` API (raycasting handled internally).
+- `loadAudio(app, url, options)` — audio loading with lazy `AudioListener`
+  setup and optional `PositionalAudio` for 3D sound.
+- CI now type-checks the declarations (`npm run typecheck-ascended`, `tsc`).
+- GitHub Pages landing page (`index.html`) linking to the live demo.
+
 ## [1.3.0]
 
 Based on **three.js r184**.

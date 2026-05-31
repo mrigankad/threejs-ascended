@@ -20,3 +20,5 @@ export { memoizeLoader } from './cache.js';
 export { loadTexture } from './texture.js';
 export { addStats } from './stats.js';
 export { setEnvironment } from './environment.js';
+export { PointerPicker, addPicking } from './picking.js';
+export { loadAudio } from './audio.js';

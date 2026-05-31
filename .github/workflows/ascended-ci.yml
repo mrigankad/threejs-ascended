@@ -32,5 +32,8 @@ jobs:
       - name: Lint helper layer
         run: npx eslint addons/ascended/*.js
 
+      - name: Type-check declarations
+        run: npm run typecheck-ascended
+
       - name: Run helper tests
         run: npm run test-ascended

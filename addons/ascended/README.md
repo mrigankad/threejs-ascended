@@ -89,6 +89,15 @@ once even under concurrent requests. Has `.clear()`; evicts failures for retry.
 Adds an FPS / frame-time overlay that updates on the render loop (three.js
 `stats.module`, loaded dynamically).
 
+### `addPicking(app)` → `PointerPicker`
+Adds click/pointer picking and exposes `app.onClick( object, callback )`. The
+callback fires when the object (or a descendant) is clicked, receiving the
+closest intersection. Use `PointerPicker` directly for finer control.
+
+### `loadAudio(app, url, options?)` → `Promise<Audio|PositionalAudio>`
+Loads audio and returns a ready-to-play source, lazily attaching an
+`AudioListener` to the camera. Pass `positional: true` for 3D spatial sound.
+
 ### `disposeObject(object)` → `number`
 Recursively frees GPU resources (geometries, materials, and their textures) for
 an object and its descendants — three.js does not do this automatically when you
