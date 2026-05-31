@@ -277,7 +277,7 @@ class PassNode extends TempNode {
 		 * Whether the pass is transparent.
 		 *
 		 * @type {boolean}
-		 * @default false
+		 * @default true
 		 */
 		this.transparent = true;
 
