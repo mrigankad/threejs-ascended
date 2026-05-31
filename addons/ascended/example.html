@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>three.js Ascended — SceneApp demo</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<style>
+			html, body { margin: 0; height: 100%; background: #111; overflow: hidden; }
+			#app { width: 100vw; height: 100vh; }
+		</style>
+	</head>
+	<body>
+		<div id="app"></div>
+
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../../build/three.module.js"
+				}
+			}
+		</script>
+
+		<script type="module">
+			import { BoxGeometry, Mesh, MeshStandardMaterial } from 'three';
+			import { SceneApp, addStudioLighting } from './index.js';
+
+			const app = new SceneApp( { container: document.querySelector( '#app' ) } );
+
+			addStudioLighting( app.scene );
+
+			const cube = new Mesh(
+				new BoxGeometry(),
+				new MeshStandardMaterial( { color: 0x3399ff, roughness: 0.4, metalness: 0.1 } )
+			);
+			app.scene.add( cube );
+
+			app.onUpdate( ( delta ) => {
+
+				cube.rotation.x += delta * 0.5;
+				cube.rotation.y += delta;
+
+			} );
+
+			app.start();
+		</script>
+	</body>
+</html>

@@ -13,6 +13,7 @@
     "./examples/fonts/*": "./examples/fonts/*",
     "./examples/jsm/*": "./examples/jsm/*",
     "./addons": "./examples/jsm/Addons.js",
+    "./addons/ascended": "./addons/ascended/index.js",
     "./addons/*": "./examples/jsm/*",
     "./src/*": "./src/*",
     "./webgpu": "./build/three.webgpu.js",
@@ -31,6 +32,7 @@
     "./src/nodes/**/*"
   ],
   "files": [
+    "addons/ascended",
     "build",
     "examples/jsm",
     "examples/fonts",
@@ -72,6 +74,7 @@
     "test-e2e": "node test/e2e/puppeteer.js",
     "test-e2e-cov": "node test/e2e/check-coverage.js",
     "test-e2e-webgpu": "node test/e2e/puppeteer.js --webgpu",
+    "test-ascended": "node --test addons/ascended/test/ascended.test.mjs",
     "test-treeshake": "rollup -c test/rollup.treeshake.config.js",
     "make-screenshot": "node test/e2e/puppeteer.js --make"
   },
